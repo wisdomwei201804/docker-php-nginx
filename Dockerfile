@@ -1,12 +1,42 @@
-FROM alpine:3.12
-LABEL Maintainer="Tim de Pater <code@trafex.nl>" \
-      Description="Lightweight container with Nginx 1.18 & PHP-FPM 7.3 based on Alpine Linux."
+FROM alpine:latest
+MAINTAINER wisdom_wei <wisdom_wei@139.com>
+LABEL Description="Lightweight container with Nginx & PHP-FPM based on Alpine Linux."
 
 # Install packages and remove default server definition
-RUN apk --no-cache add php7 php7-fpm php7-opcache php7-mysqli php7-json php7-openssl php7-curl \
-    php7-zlib php7-xml php7-phar php7-intl php7-dom php7-xmlreader php7-ctype php7-session \
-    php7-mbstring php7-gd nginx supervisor curl && \
-    rm /etc/nginx/conf.d/default.conf
+RUN apk --no-cache add php7-fpm  \
+                       php7-mcrypt \
+                       php7-soap \
+                       php7-openssl \
+                       php7-gmp \
+                       php7-json \
+                       php7-zlib \
+                       php7-mysqli \
+                       php7-bcmath \
+                       php7-gd \
+                       php7-gettext \
+                       php7-xmlreader \
+                       php7-xmlrpc \
+                       php7-bz2 \
+                       php7-iconv \
+                       php7-curl \
+                       php7-ctype \
+                       php7-mbstring \
+                       php7-opcache \
+                       php7-xml \
+                       php7-phar \
+                       php7-intl \
+                       php7-dom \
+                       php7-session \
+                       nginx supervisor curl
+
+# nginx default conf
+RUN mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
+
+# rm apk cache
+RUN rm -rf /var/cache/apk/*
+
+# set extra PATH
+ENV PATH /root:$PATH
 
 # Configure nginx
 COPY config/nginx.conf /etc/nginx/nginx.conf
@@ -23,9 +53,9 @@ RUN mkdir -p /var/www/html
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
 RUN chown -R nobody.nobody /var/www/html && \
-  chown -R nobody.nobody /run && \
-  chown -R nobody.nobody /var/lib/nginx && \
-  chown -R nobody.nobody /var/log/nginx
+    chown -R nobody.nobody /run && \
+    chown -R nobody.nobody /var/lib/nginx && \
+    chown -R nobody.nobody /var/log/nginx
 
 # Switch to use a non-root user from here on
 USER nobody
