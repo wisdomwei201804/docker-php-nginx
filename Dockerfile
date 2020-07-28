@@ -27,7 +27,7 @@ RUN apk --no-cache add php7-fpm  \
                        php7-intl \
                        php7-dom \
                        php7-session \
-                       nginx supervisor curl
+                       nginx curl supervisor
 
 # nginx default conf
 RUN mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
@@ -44,7 +44,6 @@ COPY config/nginx.conf /etc/nginx/nginx.conf
 # Configure PHP-FPM
 COPY config/fpm-pool.conf /etc/php7/php-fpm.d/www.conf
 COPY config/php.ini /etc/php7/conf.d/custom.ini
-COPY config/php-fpm.conf /etc/php7/php-fpm.conf
 
 # Configure supervisord
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -66,7 +65,7 @@ WORKDIR /var/www/html
 COPY --chown=nobody src/ /var/www/html/
 
 # Expose the port nginx is reachable on
-EXPOSE 8080
+EXPOSE 8080 8443
 
 # Let supervisord start nginx & php-fpm
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
