@@ -27,6 +27,11 @@ RUN apk --no-cache add php7-fpm  \
                        php7-intl \
                        php7-dom \
                        php7-session \
+					   php7-pdo_odbc \
+					   php7-pdo \
+					   php7-odbc \
+					   php7-pdo_mysql \
+					   php7-redis \
                        nginx curl supervisor
 
 # nginx default conf
