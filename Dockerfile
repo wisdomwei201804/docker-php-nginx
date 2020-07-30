@@ -3,36 +3,12 @@ MAINTAINER wisdom_wei <wisdom_wei@139.com>
 LABEL Description="Lightweight container with Nginx & PHP-FPM based on Alpine Linux."
 
 # Install packages and remove default server definition
-RUN apk --no-cache add php7-fpm  \
-                       php7-mcrypt \
-                       php7-soap \
-                       php7-openssl \
-                       php7-gmp \
-                       php7-json \
-                       php7-zlib \
-                       php7-mysqli \
-                       php7-bcmath \
-                       php7-gd \
-                       php7-gettext \
-                       php7-xmlreader \
-                       php7-xmlrpc \
-                       php7-bz2 \
-                       php7-iconv \
-                       php7-curl \
-                       php7-ctype \
-                       php7-mbstring \
-                       php7-opcache \
-                       php7-xml \
-                       php7-phar \
-                       php7-intl \
-                       php7-dom \
-                       php7-session \
-					   php7-pdo_odbc \
-					   php7-pdo \
-					   php7-odbc \
-					   php7-pdo_mysql \
-					   php7-redis \
-                       nginx curl supervisor
+RUN apk --no-cache add \
+    php7-fpm php7-mcrypt php7-soap php7-openssl php7-gmp php7-json php7-zlib \
+    php7-mysqli php7-bcmath php7-gd php7-gettext php7-xmlreader php7-xmlrpc \
+    php7-bz2 php7-iconv php7-curl php7-ctype php7-mbstring php7-opcache php7-xml \
+    php7-phar php7-intl php7-dom php7-session php7-pdo_odbc php7-pdo php7-odbc \
+    php7-pdo_mysql php7-redis nginx curl supervisor
 
 # nginx default conf
 RUN mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
