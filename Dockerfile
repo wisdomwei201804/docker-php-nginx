@@ -8,18 +8,23 @@ RUN apk --no-cache add \
     php7-mysqli php7-bcmath php7-gd php7-gettext php7-xmlreader php7-xmlrpc \
     php7-bz2 php7-iconv php7-curl php7-ctype php7-mbstring php7-opcache php7-xml \
     php7-phar php7-intl php7-dom php7-session php7-pdo_odbc php7-pdo php7-odbc \
-    php7-pdo_mysql php7-redis nginx curl supervisor
+    php7-pdo_mysql php7-redis nginx curl supervisor && rm -rf /var/cache/apk/* && \
+    mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 
-# nginx default conf
-RUN mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
-
-# rm apk cache
-RUN rm -rf /var/cache/apk/*
-
+# Make directory which needed by nginx
+# Make sure files/folders needed by the processes are accessable when they run under the nobody user
+RUN mkdir -p /var/www/html && mkdir -p /certs && \
+    chown -R nobody.nobody /var/www/html && \
+    chown -R nobody.nobody /run && \
+    chown -R nobody.nobody /var/lib/nginx && \
+    chown -R nobody.nobody /var/log/nginx
+    
 # set extra PATH
 ENV PATH /root:$PATH
 
 # Configure nginx
+COPY config/cert.pem /certs/cert.pem
+COPY config/cert.key /certs/cert.key
 COPY config/nginx.conf /etc/nginx/nginx.conf
 
 # Configure PHP-FPM
@@ -28,15 +33,6 @@ COPY config/php.ini /etc/php7/conf.d/custom.ini
 
 # Configure supervisord
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Setup document root
-RUN mkdir -p /var/www/html
-
-# Make sure files/folders needed by the processes are accessable when they run under the nobody user
-RUN chown -R nobody.nobody /var/www/html && \
-    chown -R nobody.nobody /run && \
-    chown -R nobody.nobody /var/lib/nginx && \
-    chown -R nobody.nobody /var/log/nginx
 
 # Switch to use a non-root user from here on
 USER nobody
